@@ -19,9 +19,9 @@ public class AsyncTestUtil {
      * @param matchers
      */
     public static <T> void waitUntilMatches(Supplier<T> producer, Consumer<T> matchers, long sleepTime, long maxWaitTime) {
-        long time = 0;
+        long time = 0L;
         AssertionError error = null;
-        while (time < maxWaitTime) {
+        while (time <= maxWaitTime) {
             try {
                 matchers.accept(producer.get());
                 return;
@@ -30,7 +30,7 @@ public class AsyncTestUtil {
                 LOG.error("", e);
                 try {
                     Thread.sleep(sleepTime);
-                    time = time + sleepTime;
+                    time = time + (sleepTime != 0L ? sleepTime : 1L);
                 } catch (InterruptedException ie) {
                     throw new RuntimeException(ie);
                 }
