@@ -30,7 +30,7 @@ public class AsyncTestUtil {
                 LOG.error("", e);
                 try {
                     Thread.sleep(sleepTime);
-                    time = time + (sleepTime != 0L ? sleepTime : 1L);
+                    time = time + (sleepTime > 0L ? sleepTime : 1L);
                 } catch (InterruptedException ie) {
                     throw new RuntimeException(ie);
                 }

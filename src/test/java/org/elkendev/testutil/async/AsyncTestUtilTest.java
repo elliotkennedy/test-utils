@@ -33,17 +33,17 @@ public class AsyncTestUtilTest {
 
     @Test
     public void testWaitUntilMatches_passTestWhenConditionIsMetWithinTime() {
-        Future<Boolean> future = executor.submit(new Task(100L));
+        Future<Void> future = executor.submit(new Task(100L));
         waitUntilMatches(future::isDone, ((conditionMet) -> assertWithMessage("Task not complete").that(conditionMet).isTrue()), 10L, 500L);
     }
 
     @Test(expected = AssertionError.class)
     public void testWaitUntilMatches_whenConditionIsNotMetInTime_failAfterTimeout() {
-        Future<Boolean> future = executor.submit(new Task(1000L));
+        Future<Void> future = executor.submit(new Task(1000L));
         waitUntilMatches(future::isDone, ((conditionMet) -> assertWithMessage("Task not complete").that(conditionMet).isTrue()), 10L, 100L);
     }
 
-    class Task implements Callable<Boolean> {
+    class Task implements Callable<Void> {
 
         private final long taskTime;
 
@@ -52,10 +52,10 @@ public class AsyncTestUtilTest {
         }
 
         @Override
-        public Boolean call() {
+        public Void call() {
             try {
                 Thread.sleep(taskTime);
-                return true;
+                return null;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
