@@ -1,0 +1,8 @@
+jar {
+    baseName = 'elkendev-test-utils-autoconfigure'
+}
+
+dependencies {
+    compile project(':test-utils'), optional
+    compile 'org.springframework.boot:spring-boot-autoconfigure:1.3.1.RELEASE', optional
+}

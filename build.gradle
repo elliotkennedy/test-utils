@@ -4,40 +4,48 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
         classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'wrapper'
-apply plugin: 'maven-publish'
-apply plugin: 'io.spring.dependency-management'
-
-jar {
-    baseName = 'test-utils'
+allprojects {
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
 }
 
-repositories {
-	mavenCentral()
-}
+subprojects {
 
-dependencies {
+    apply plugin: 'java'
+    apply plugin: 'wrapper'
+    apply plugin: 'maven-publish'
+    apply plugin: 'nebula.optional-base'
 
-    def springVersion = '4.2.4.RELEASE'
+    //apply plugin: 'io.spring.dependency-management'
 
-    compile "org.springframework:spring-web:${springVersion}"
-    compile "org.springframework:spring-aop:${springVersion}"
-    compile 'org.aspectj:aspectjweaver:1.8.7'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'org.apache.logging.log4j:log4j-core:2.5'
-    compile 'org.slf4j:slf4j-api:1.7.13'
-    compile 'org.slf4j:slf4j-simple:1.7.13'
+    repositories {
+        mavenCentral()
+    }
 
-    testCompile 'com.google.truth:truth:0.27'
-    testCompile 'junit:junit:4.12'
-    testCompile 'net.jadler:jadler-all:1.2.0'
-    testCompile "org.springframework:spring-test:${springVersion}"
+    ext.mavenVersion = "${versionMajor}.${versionMinor}.${versionPatch}-${versionBuild}-${releaseType}"
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId project.name
+                groupId 'org.elkendev.test'
+                version mavenVersion
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username "${repositoryUsername}"
+                    password "${repositoryPassword}"
+                }
+                url "${repositoryUrl}/libs-${releaseType.endsWith('SNAPSHOT') ? 'snapshot' : 'release' }-local"
+            }
+        }
+    }
 }
